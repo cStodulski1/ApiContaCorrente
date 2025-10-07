@@ -1,15 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiContaCorrente.Helpers;
+using ApiContaCorrente.Interfaces;
+using ApiContaCorrente.Models.Dto;
+using ApiContaCorrente.Models.Responses;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApiContaCorrente.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ContaCorrenteController : Controller
+    public class ContaCorrenteController(IContaCorrenteService contaCorrenteService) : Controller
     {
-        [HttpGet]
-        public IActionResult Teste()
+        private readonly IContaCorrenteService contaCorrenteService = contaCorrenteService;
+
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(CriarContaDto contaDto)
         {
-            return Ok("Just checking docker");
+            bool cpfValido = CpfHelper.IsCpfValid(contaDto.Cpf);
+            if (!cpfValido) return BadRequest("INVALID_DOCUMENT: Cpf inválido");
+
+            var result = await contaCorrenteService.CriarContaCorrente(contaDto);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Message);
+        }
+
+        [HttpGet]
+        public IActionResult JustInit()
+        {
+            return Ok("repo iniciado");
         }
     }
 }

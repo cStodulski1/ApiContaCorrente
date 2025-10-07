@@ -1,18 +1,6 @@
 version: "3.9"
 
 services:
-  db:
-    image: postgres:16
-    container_name: conta_corrente_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ContaCorrenteDB
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
 
   app:
     build: .
@@ -20,7 +8,7 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=ContaCorrenteDB;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Data Source=app/storage/contacorrentedb.db
     ports:
       - "8080:8081"
     volumes:

@@ -1,5 +1,8 @@
-using Npgsql;
+using ApiContaCorrente.Interfaces;
+using ApiContaCorrente.Repository;
+using ApiContaCorrente.Services;
 using System.Data;
+using System.Data.SQLite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IDbConnection>(serviceProvider =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new NpgsqlConnection(connectionString);
+    string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new SQLiteConnection(connectionString);
 });
+builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
+builder.Services.AddTransient<IContaCorrenteService, ContaCorrenteService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

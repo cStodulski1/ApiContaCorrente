@@ -27,4 +27,5 @@ RUN dotnet publish "./ApiContaCorrente.csproj" -c $BUILD_CONFIGURATION -o /app/p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=publish /app/storage/contacorrentedb.db .
 ENTRYPOINT ["dotnet", "ApiContaCorrente.dll"]
