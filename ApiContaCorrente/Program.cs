@@ -1,8 +1,13 @@
+using ApiContaCorrente.Authentication;
+using ApiContaCorrente.Extensions;
 using ApiContaCorrente.Interfaces;
 using ApiContaCorrente.Repository;
 using ApiContaCorrente.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Data.SQLite;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,13 +18,30 @@ builder.Services.AddScoped<IDbConnection>(serviceProvider =>
     string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     return new SQLiteConnection(connectionString);
 });
+
 builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
 builder.Services.AddTransient<IContaCorrenteService, ContaCorrenteService>();
 
+builder.Services.AddScoped<TokenProvider>();
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenWithAuth();
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        o.RequireHttpsMetadata = false;
+        o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 var app = builder.Build();
 
@@ -31,6 +53,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

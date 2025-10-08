@@ -5,7 +5,7 @@
         public int Id { get; private set; }
         public string Numero { get; private set; } = numero;
         public string Cpf { get; private set; } = cpf;
-        public string Nome { get; private set; } = "DefaultValue";
+        public string Nome { get; private set; } = "DefaultName";
         public bool Ativo { get; private set; } = true;
         public string HashSenha { get; private set; } = hashSenha;
 

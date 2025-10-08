@@ -2,6 +2,7 @@
 using ApiContaCorrente.Interfaces;
 using ApiContaCorrente.Models.Dto;
 using ApiContaCorrente.Models.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiContaCorrente.Controllers
@@ -28,10 +29,11 @@ namespace ApiContaCorrente.Controllers
             return Ok(result.Message);
         }
 
-        [HttpGet]
-        public IActionResult JustInit()
-        {
-            return Ok("repo iniciado");
-        }
+        //[HttpPut]
+        //[Authorize]
+        //public IActionResult InativarConta()
+        //{
+
+        //}
     }
 }
