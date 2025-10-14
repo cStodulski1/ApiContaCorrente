@@ -1,33 +1,43 @@
-﻿using ApiContaCorrente.Helpers;
+﻿using ApiContaCorrente.ContasCorrentes.Commands.Requests;
+using ApiContaCorrente.ContasCorrentes.Queries.Requests;
+using ApiContaCorrente.Helpers;
 using ApiContaCorrente.Interfaces;
 using ApiContaCorrente.Models.Dto;
+using ApiContaCorrente.Models.Enums;
 using ApiContaCorrente.Models.Responses;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ApiContaCorrente.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ContaCorrenteController(IContaCorrenteService contaCorrenteService) : Controller
+    public class ContaCorrenteController(IMediator mediator) : Controller
     {
-        private readonly IContaCorrenteService contaCorrenteService = contaCorrenteService;
+        private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar(CriarContaDto contaDto)
+        public async Task<IActionResult> Cadastrar([FromBody]CriarContaCorrenteRequest command)
         {
-            bool cpfValido = CpfHelper.IsCpfValid(contaDto.Cpf);
-            if (!cpfValido) return BadRequest("INVALID_DOCUMENT: Cpf inválido");
+            var response = await _mediator.Send(command);
+            
+            if (response.TipoDeFalha == TipoDeFalha.INVALID_DOCUMENT) return BadRequest(response.Message);
 
-            var result = await contaCorrenteService.CriarContaCorrente(contaDto);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Message);
-            }
-
-            return Ok(result.Message);
+            return Ok(response.Message);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Login([FromQuery] LoginContaRequest command)
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response.Token);
+        }
+
+        //criar método de login e utilizar o tokenprovider no retorno
 
         //[HttpPut]
         //[Authorize]

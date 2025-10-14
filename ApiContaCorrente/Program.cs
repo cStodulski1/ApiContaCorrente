@@ -2,7 +2,6 @@ using ApiContaCorrente.Authentication;
 using ApiContaCorrente.Extensions;
 using ApiContaCorrente.Interfaces;
 using ApiContaCorrente.Repository;
-using ApiContaCorrente.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -19,9 +18,10 @@ builder.Services.AddScoped<IDbConnection>(serviceProvider =>
     return new SQLiteConnection(connectionString);
 });
 
-builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
-builder.Services.AddTransient<IContaCorrenteService, ContaCorrenteService>();
 
+builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddScoped<TokenProvider>();
 
 builder.Services.AddControllers();

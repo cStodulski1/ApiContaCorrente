@@ -2,6 +2,7 @@
 {
     public class SenhaEncrypt
     {
+        //alterar isso aqui pra utilizar salt individual de cada user
         public static string EncriptarSenha(string senha)
         {
             string hashSenha = BCrypt.Net.BCrypt.EnhancedHashPassword(senha, 13);

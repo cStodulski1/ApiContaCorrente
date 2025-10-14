@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ApiContaCorrente.Authentication
 {
-    internal sealed class TokenProvider(IConfiguration configuration)
+    public class TokenProvider(IConfiguration configuration)
     {
         public string Create (ContaCorrente contaCorrente)
         {
@@ -21,7 +21,8 @@ namespace ApiContaCorrente.Authentication
                 [
                     new Claim(JwtRegisteredClaimNames.Sub, contaCorrente.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Name, contaCorrente.Nome),
-                    new Claim("cpf", contaCorrente.Cpf)
+                    new Claim("cpf", contaCorrente.Cpf),
+                    new Claim("numero", contaCorrente.Numero)
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
                 SigningCredentials = credentials,

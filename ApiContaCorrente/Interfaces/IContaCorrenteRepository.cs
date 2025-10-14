@@ -8,5 +8,6 @@ namespace ApiContaCorrente.Interfaces
     {
         public void Init();
         public Task<Result> AddContaCorrente(ContaCorrente contaCorrente);
+        public Result<ContaCorrente> BuscarContaCorrentePorNumeroOuCpf(string campoLogin);
     }
 }

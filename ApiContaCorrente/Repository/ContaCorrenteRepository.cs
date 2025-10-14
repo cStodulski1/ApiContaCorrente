@@ -70,5 +70,23 @@ namespace ApiContaCorrente.Repository
 
             return Result.Success();
         }
+
+        //public Result<ContaCorrente> BuscarContaCorrentePorNumero(string numero)
+        //{
+        //    string sqlQuery = @"SELECT  FROM ContaCorrente WHERE Numero = @Numero";
+        //    var contaBuscada =  dbConnection.QueryFirst<ContaCorrente>(sqlQuery, new {Numero = numero});
+
+        //    return Result<ContaCorrente>.Success(contaBuscada);
+        //}
+
+        public Result<ContaCorrente> BuscarContaCorrentePorNumeroOuCpf(string campoLogin)
+        {
+            string sqlQuery = @"SELECT ID AS id, Numero AS numero, Cpf AS cpf, Nome AS nome, Ativo AS ativo, HashSenha AS hashSenha 
+                                FROM ContaCorrente WHERE Numero = @CampoLogin OR Cpf = @CampoLogin";
+            var parametro = new {CampoLogin = campoLogin};
+
+            var contaCorrente = dbConnection.QueryFirstOrDefault<ContaCorrente>(sqlQuery, parametro);
+            return Result<ContaCorrente>.Success(contaCorrente);
+        }
     }
 }
