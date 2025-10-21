@@ -9,6 +9,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -34,16 +37,30 @@ namespace ApiContaCorrente.Controllers
         public async Task<IActionResult> Login([FromQuery] LoginContaRequest command)
         {
             var response = await _mediator.Send(command);
+
+            if (!response.IsSuccess)
+            {
+                return Unauthorized(response.TipoDeFalha.ToString() + ": " + response.Message);
+            }
+
             return Ok(response.Token);
         }
 
-        //criar método de login e utilizar o tokenprovider no retorno
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> InativarConta([FromBody]InativarContaCorrenteRequest command)
+        {
+            string headerAuth = Request.Headers[HeaderNames.Authorization];
 
-        //[HttpPut]
-        //[Authorize]
-        //public IActionResult InativarConta()
-        //{
+            AuthenticationHeaderValue.TryParse(headerAuth, out AuthenticationHeaderValue headerValue);
 
-        //}
+            string token = headerValue.Parameter;
+            command.Token = token;
+            var response = await _mediator.Send(command);
+
+            if (!response.IsSuccess) return Forbid();
+
+            return NoContent();
+        }
     }
 }

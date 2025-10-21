@@ -22,7 +22,7 @@ namespace ApiContaCorrente.ContasCorrentes.Handlers
                 {
                     IsSuccess = false,
                     TipoDeFalha = Models.Enums.TipoDeFalha.INVALID_DOCUMENT,
-                    Message = $"INVALID_DOCUMENT: Cpf: {cpf} é inválido"
+                    Message = $"INVALID_DOCUMENT: Cpf: {cpf} é um cpf inválido"
                 };
 
                 return response;
@@ -30,7 +30,7 @@ namespace ApiContaCorrente.ContasCorrentes.Handlers
 
             string hashSenha = SenhaEncrypt.EncriptarSenha(request.Senha);
             string numeroDaContaCorrente = GerarNumeroContaCorrente();
-            cpf.Trim().Replace(".", "").Replace("-", "");
+            cpf = cpf.Trim().Replace(".", "").Replace("-", "");
             ContaCorrente novaContaCorrente = new(numeroDaContaCorrente, cpf, hashSenha);
 
             if (!string.IsNullOrEmpty(request.Nome)) novaContaCorrente.AdicionarNome(request.Nome);

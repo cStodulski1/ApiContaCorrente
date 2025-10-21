@@ -15,7 +15,21 @@ namespace ApiContaCorrente.ContasCorrentes.Handlers
         {
             var campoLogin = request.NumeroOuCpf.Trim().Replace(".", "").Replace("-", "");
 
-            var contaCorrente = _repo.BuscarContaCorrentePorNumeroOuCpf(campoLogin).Data;
+            var requestContaCorrente = _repo.BuscarContaCorrentePorNumeroOuCpf(campoLogin);
+            var contaCorrente = requestContaCorrente.Data;
+
+            if(!requestContaCorrente.IsSuccess && requestContaCorrente.Data == null)
+            {
+                var badResponse = new LoginContaResponse()
+                {
+                    IsSuccess = false,
+                    TipoDeFalha = Models.Enums.TipoDeFalha.INVALID_DOCUMENT,
+                    Message = requestContaCorrente.Message
+                };
+
+                return badResponse;
+            }
+            
             bool senhaCorreta = SenhaEncrypt.VerificarSenha(request.Senha, contaCorrente.HashSenha);
 
             if (senhaCorreta)
@@ -30,14 +44,16 @@ namespace ApiContaCorrente.ContasCorrentes.Handlers
 
                 return response;
             }
-
-            var badResponse = new LoginContaResponse()
+            else
             {
-                IsSuccess = false,
-                TipoDeFalha = Models.Enums.TipoDeFalha.USER_UNAUTHORIZED,
-                Message = "tá liberado não irmão"
-            };
-            return badResponse;
+                var badResponse = new LoginContaResponse()
+                {
+                    IsSuccess = false,
+                    TipoDeFalha = Models.Enums.TipoDeFalha.USER_UNAUTHORIZED,
+                    Message = "Senha incorreta!"
+                };
+                return badResponse;
+            }
         }
     }
 }

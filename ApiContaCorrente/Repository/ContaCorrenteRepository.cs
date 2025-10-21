@@ -71,13 +71,16 @@ namespace ApiContaCorrente.Repository
             return Result.Success();
         }
 
-        //public Result<ContaCorrente> BuscarContaCorrentePorNumero(string numero)
-        //{
-        //    string sqlQuery = @"SELECT  FROM ContaCorrente WHERE Numero = @Numero";
-        //    var contaBuscada =  dbConnection.QueryFirst<ContaCorrente>(sqlQuery, new {Numero = numero});
+        public void Inativar(string numeroDaConta)
+        {
+            string sqlQuery = "UPDATE ContaCorrente SET Ativo = 0 WHERE Numero = @Numero";
+            var parametro = new { Numero = numeroDaConta };
+            dbConnection.Open();
+            int rowsAffected = dbConnection.Execute(sqlQuery, parametro);
+            dbConnection.Close();
 
-        //    return Result<ContaCorrente>.Success(contaBuscada);
-        //}
+            if (rowsAffected <= 0) throw new Exception("Houve um problema ao inativar a conta.");
+        }
 
         public Result<ContaCorrente> BuscarContaCorrentePorNumeroOuCpf(string campoLogin)
         {
@@ -85,7 +88,15 @@ namespace ApiContaCorrente.Repository
                                 FROM ContaCorrente WHERE Numero = @CampoLogin OR Cpf = @CampoLogin";
             var parametro = new {CampoLogin = campoLogin};
 
+            dbConnection.Open();
             var contaCorrente = dbConnection.QueryFirstOrDefault<ContaCorrente>(sqlQuery, parametro);
+            dbConnection.Close();
+
+            if(contaCorrente == null)
+            {
+                return Result<ContaCorrente>.Failure($"Conta corrente com identificação: {campoLogin} não encontrada!");
+            }
+
             return Result<ContaCorrente>.Success(contaCorrente);
         }
     }
