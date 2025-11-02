@@ -1,7 +1,7 @@
 ﻿using ApiContaCorrente.ContasCorrentes.Commands.Requests;
 using ApiContaCorrente.ContasCorrentes.Commands.Responses;
+using ApiContaCorrente.Database.Interfaces;
 using ApiContaCorrente.Helpers;
-using ApiContaCorrente.Interfaces;
 using MediatR;
 using System.IdentityModel.Tokens.Jwt;
 

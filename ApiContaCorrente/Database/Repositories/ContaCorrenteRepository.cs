@@ -1,22 +1,23 @@
-﻿using ApiContaCorrente.Interfaces;
+﻿using ApiContaCorrente.Database.Interfaces;
 using ApiContaCorrente.Models;
-using ApiContaCorrente.Models.Dto;
 using ApiContaCorrente.Models.Responses;
 using Dapper;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SQLite;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ApiContaCorrente.Repository
+namespace ApiContaCorrente.Database.Repositories
 {
     public class ContaCorrenteRepository(IDbConnection connection) : IContaCorrenteRepository
     {
         private readonly IDbConnection dbConnection = connection;
-
         public void Init()
         {
-            dbConnection.Open();
-
+            //salvar essas queries em arquivo separado .sql
             string sqlTableContaCorrente = @"CREATE TABLE IF NOT EXISTS ContaCorrente (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Numero TEXT NOT NULL,
@@ -24,7 +25,6 @@ namespace ApiContaCorrente.Repository
                     Nome TEXT NOT NULL,
                     Ativo INTEGER NOT NULL,
                     HashSenha TEXT NOT NULL);";
-
             string sqlTableMovimento = @"CREATE TABLE IF NOT EXISTS Movimento (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     IdContaCorrente INTEGER NOT NULL,
@@ -32,10 +32,6 @@ namespace ApiContaCorrente.Repository
                     TipoMovimento INTEGER NOT NULL,
                     Valor INTEGER NOT NULL,
                     FOREIGN KEY(IdContaCorrente) REFERENCES ContaCorrente(Id));";
-
-
-            dbConnection.Execute(sqlTableContaCorrente);
-            dbConnection.Execute(sqlTableMovimento);
         }
 
         public async Task<Result> AddContaCorrente(ContaCorrente contaCorrente)
@@ -86,13 +82,13 @@ namespace ApiContaCorrente.Repository
         {
             string sqlQuery = @"SELECT ID AS id, Numero AS numero, Cpf AS cpf, Nome AS nome, Ativo AS ativo, HashSenha AS hashSenha 
                                 FROM ContaCorrente WHERE Numero = @CampoLogin OR Cpf = @CampoLogin";
-            var parametro = new {CampoLogin = campoLogin};
+            var parametro = new { CampoLogin = campoLogin };
 
             dbConnection.Open();
             var contaCorrente = dbConnection.QueryFirstOrDefault<ContaCorrente>(sqlQuery, parametro);
             dbConnection.Close();
 
-            if(contaCorrente == null)
+            if (contaCorrente == null)
             {
                 return Result<ContaCorrente>.Failure($"Conta corrente com identificação: {campoLogin} não encontrada!");
             }

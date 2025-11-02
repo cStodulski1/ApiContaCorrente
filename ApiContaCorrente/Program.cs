@@ -1,9 +1,11 @@
 using ApiContaCorrente.Authentication;
+using ApiContaCorrente.Database.Interfaces;
+using ApiContaCorrente.Database.Repositories;
 using ApiContaCorrente.Extensions;
-using ApiContaCorrente.Interfaces;
-using ApiContaCorrente.Repository;
+using ApiContaCorrente.IdempotenciaUtils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
@@ -18,10 +20,25 @@ builder.Services.AddScoped<IDbConnection>(serviceProvider =>
     return new SQLiteConnection(connectionString);
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var connectionString = "host.docker.internal:6379";
+    return ConnectionMultiplexer.Connect(connectionString);
+});
+
+builder.Services.AddScoped<IDatabase>(sp =>
+{
+    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+    return multiplexer.GetDatabase();
+});
 
 builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
+builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+
 builder.Services.AddScoped<TokenProvider>();
 
 builder.Services.AddControllers();
@@ -30,10 +47,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(o =>
+    .AddJwtBearer(options =>
     {
-        o.RequireHttpsMetadata = false;
-        o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
@@ -41,7 +58,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
 
-        o.Events = new JwtBearerEvents
+        options.Events = new JwtBearerEvents
         {
             OnChallenge = context =>
             {

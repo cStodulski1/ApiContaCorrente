@@ -8,5 +8,6 @@ namespace ApiContaCorrente.ContasCorrentes.Commands.Requests
         public string Cpf { get; set; }
         public string Senha { get; set; }
         public string Nome { get; set; }
+        public Guid RequestId { get; set; }
     }
 }

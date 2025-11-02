@@ -1,8 +1,12 @@
 ﻿using ApiContaCorrente.Models;
-using ApiContaCorrente.Models.Dto;
 using ApiContaCorrente.Models.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ApiContaCorrente.Interfaces
+namespace ApiContaCorrente.Database.Interfaces
 {
     public interface IContaCorrenteRepository
     {

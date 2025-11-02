@@ -1,8 +1,8 @@
 ﻿using ApiContaCorrente.Authentication;
 using ApiContaCorrente.ContasCorrentes.Queries.Requests;
 using ApiContaCorrente.ContasCorrentes.Queries.Responses;
+using ApiContaCorrente.Database.Interfaces;
 using ApiContaCorrente.Helpers;
-using ApiContaCorrente.Interfaces;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 

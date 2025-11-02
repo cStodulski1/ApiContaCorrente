@@ -1,8 +1,6 @@
 ﻿using ApiContaCorrente.ContasCorrentes.Commands.Requests;
 using ApiContaCorrente.ContasCorrentes.Queries.Requests;
 using ApiContaCorrente.Helpers;
-using ApiContaCorrente.Interfaces;
-using ApiContaCorrente.Models.Dto;
 using ApiContaCorrente.Models.Enums;
 using ApiContaCorrente.Models.Responses;
 using MediatR;
@@ -24,8 +22,15 @@ namespace ApiContaCorrente.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar([FromBody]CriarContaCorrenteRequest command)
+        public async Task<IActionResult> Cadastrar([FromBody]CriarContaCorrenteRequest command,
+            [FromHeader(Name = "X-Idempotency-Key")] string requestId)
         {
+            if(!Guid.TryParse(requestId, out Guid requestIdParsed)) {
+                return BadRequest("X-Idempotency-Key header is missing or invalid.");
+            }
+
+            command.RequestId = requestIdParsed;
+
             var response = await _mediator.Send(command);
             
             if (response.TipoDeFalha == TipoDeFalha.INVALID_DOCUMENT) return BadRequest(response.Message);
