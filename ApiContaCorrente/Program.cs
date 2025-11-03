@@ -3,6 +3,7 @@ using ApiContaCorrente.Database.Interfaces;
 using ApiContaCorrente.Database.Repositories;
 using ApiContaCorrente.Extensions;
 using ApiContaCorrente.IdempotenciaUtils;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -33,7 +34,9 @@ builder.Services.AddScoped<IDatabase>(sp =>
 });
 
 builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
+
 builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(IdempotencyBehavior<,>));
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));

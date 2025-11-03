@@ -2,8 +2,9 @@
 {
     public enum TipoDeFalha
     {
-        INVALID_DOCUMENT = 0,
-        USER_UNAUTHORIZED = 1,
-        INVALID_ACCOUNT = 2
+        SEM_FALHA = 0,
+        INVALID_DOCUMENT = 1,
+        USER_UNAUTHORIZED = 2,
+        INVALID_ACCOUNT = 3
     }
 }

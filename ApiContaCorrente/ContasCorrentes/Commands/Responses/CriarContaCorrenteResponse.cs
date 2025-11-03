@@ -11,6 +11,8 @@ namespace ApiContaCorrente.ContasCorrentes.Commands.Responses
         {
             string message = $"Conta criada com sucesso! Número pra acesso: {numero}";
             Message = message;
+            IsSuccess = true;
+            TipoDeFalha = TipoDeFalha.SEM_FALHA;
         }
         public string Numero { get; set; }
         public bool IsSuccess { get; set; }

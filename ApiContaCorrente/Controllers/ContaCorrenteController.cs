@@ -22,7 +22,8 @@ namespace ApiContaCorrente.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar([FromBody]CriarContaCorrenteRequest command,
+        public async Task<IActionResult> Cadastrar(
+            [FromBody]CriarContaCorrenteRequest command,
             [FromHeader(Name = "X-Idempotency-Key")] string requestId)
         {
             if(!Guid.TryParse(requestId, out Guid requestIdParsed)) {
