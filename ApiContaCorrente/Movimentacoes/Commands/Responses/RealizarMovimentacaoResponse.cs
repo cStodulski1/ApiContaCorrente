@@ -1,6 +1,10 @@
-﻿namespace ApiContaCorrente.Movimentacoes.Commands.Responses
+﻿using ApiContaCorrente.Models.Enums;
+using ApiContaCorrente.Models.Responses;
+
+namespace ApiContaCorrente.Movimentacoes.Commands.Responses
 {
-    public class RealizarMovimentacaoResponse
-    {
+    public record RealizarMovimentacaoResponse : Result
+    {         
+        public TipoDeFalha? TipoDeFalha { get; init; }
     }
 }

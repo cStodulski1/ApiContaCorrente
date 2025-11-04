@@ -4,7 +4,7 @@ using System.Net;
 
 namespace ApiContaCorrente.ContasCorrentes.Commands.Responses
 {
-    public class CriarContaCorrenteResponse
+    public record CriarContaCorrenteResponse : Result
     {
         public CriarContaCorrenteResponse() { }
         public CriarContaCorrenteResponse(string numero)
@@ -15,8 +15,6 @@ namespace ApiContaCorrente.ContasCorrentes.Commands.Responses
             TipoDeFalha = TipoDeFalha.SEM_FALHA;
         }
         public string Numero { get; set; }
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
         public TipoDeFalha TipoDeFalha { get; set; }
     }
 }

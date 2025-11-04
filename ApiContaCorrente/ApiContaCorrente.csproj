@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Movimentacoes\Handlers\" />
     <Folder Include="Movimentacoes\Queries\" />
     <Folder Include="storage\" />
   </ItemGroup>

@@ -10,6 +10,7 @@ using StackExchange.Redis;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IDatabase>(sp =>
 });
 
 builder.Services.AddTransient<IContaCorrenteRepository, ContaCorrenteRepository>();
+builder.Services.AddTransient<IMovimentacaoRepository, MovimentacaoRepository>();
 
 builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(IdempotencyBehavior<,>));
@@ -44,7 +46,11 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddScoped<TokenProvider>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    }); ;
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth();

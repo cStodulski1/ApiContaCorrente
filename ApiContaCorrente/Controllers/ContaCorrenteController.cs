@@ -22,19 +22,11 @@ namespace ApiContaCorrente.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar(
-            [FromBody]CriarContaCorrenteRequest command,
-            [FromHeader(Name = "X-Idempotency-Key")] string requestId)
+        public async Task<IActionResult> Cadastrar([FromBody]CriarContaCorrenteRequest command)
         {
-            if(!Guid.TryParse(requestId, out Guid requestIdParsed)) {
-                return BadRequest("X-Idempotency-Key header is missing or invalid.");
-            }
-
-            command.RequestId = requestIdParsed;
-
             var response = await _mediator.Send(command);
             
-            if (response.TipoDeFalha == TipoDeFalha.INVALID_DOCUMENT) return BadRequest(response.Message);
+            if (!response.IsSuccess) return BadRequest(response.Message);
 
             return Ok(response.Message);
         }
