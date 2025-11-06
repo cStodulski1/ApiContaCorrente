@@ -20,6 +20,9 @@ namespace ApiContaCorrente.ContasCorrentes.Handlers
 
             string numero = jsonToken.Claims.FirstOrDefault(c => c.Type == "numero").Value;
 
+            //testar esse método usando isso aqui no lugar
+            //string numero2 = TokenHandler.GetClaimValue(request.Token, "numero");
+
             var contaCorrenteResponse = _repo.BuscarContaCorrentePorNumeroOuCpf(numero);
             if (!contaCorrenteResponse.IsSuccess)
             {

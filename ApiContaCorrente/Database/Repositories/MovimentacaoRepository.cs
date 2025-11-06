@@ -1,6 +1,8 @@
 ﻿using ApiContaCorrente.Database.Interfaces;
 using ApiContaCorrente.Models;
+using ApiContaCorrente.Models.Enums;
 using ApiContaCorrente.Models.Responses;
+using Dapper;
 using System.Data;
 using System.Data.SQLite;
 
@@ -30,6 +32,34 @@ namespace ApiContaCorrente.Database.Repositories
             }
 
             return Task.FromResult(Result.Success("Movimentação adicionada com sucesso."));
+        }
+
+        public Task<decimal> BuscarValorDeTodasMovimentacoesSomadasPorContaIdETipoMovimento(int idContaCorrente, TipoMovimento tipoMovimento)
+        {
+            string query = @"SELECT ID as id, IdContaCorrente as idContaCorrente, 
+                            DataMovimento as dataMovimento, TipoMovimento as tipoMovimento, ValorEmCentavos as valorEmCentavos
+                            FROM Movimento WHERE IdContaCorrente = @IdContaCorrente AND TipoMovimento = @TipoMovimento";
+
+            var tipoMovimentoParametro = (int)tipoMovimento;
+            var parametro = new { IdContaCorrente = idContaCorrente, TipoMovimento = tipoMovimentoParametro};
+
+            dbConnection.Open();
+            var movimentacoes = dbConnection.Query<Movimentacao>(query, parametro);
+            dbConnection.Close();
+
+            decimal valorTotal = 0;
+
+            foreach (var movimentacao in movimentacoes)
+            {
+                valorTotal += movimentacao.Valor;
+            }
+
+            return Task.FromResult(valorTotal);
+        }
+
+        public Task<Result<decimal>> BuscarValorDeTodosDebitosSomadosPorContaId(int idContaCorrente)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,5 +7,6 @@ namespace ApiContaCorrente.Database.Interfaces
     public interface IMovimentacaoRepository
     {
         public Task<Result> AdicionarMovimentacao(Movimentacao movimentacao);
+        public Task<decimal> BuscarValorDeTodasMovimentacoesSomadasPorContaIdETipoMovimento(int idContaCorrente, TipoMovimento tipoMovimento);
     }
 }

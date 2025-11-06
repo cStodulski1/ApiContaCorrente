@@ -11,7 +11,7 @@ namespace ApiContaCorrente.Models
             IdContaCorrente = (int)idContaCorrente;
             DataMovimento = DateTime.Parse(dataMovimento);
             TipoMovimento = (TipoMovimento)tipoMovimento;
-            Valor = valorEmCentavos / 100;
+            Valor = (decimal)valorEmCentavos / 100;
         }
 
         public Movimentacao(RealizarMovimentacaoRequest movimentacaoRequest, int idContaCorrente)

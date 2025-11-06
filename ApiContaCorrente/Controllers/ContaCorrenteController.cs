@@ -44,6 +44,28 @@ namespace ApiContaCorrente.Controllers
             return Ok(response.Token);
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ConsultarSaldo([FromHeader]ConsultarSaldoRequest command)
+        {
+            string headerAuth = Request.Headers[HeaderNames.Authorization];
+
+            AuthenticationHeaderValue.TryParse(headerAuth, out AuthenticationHeaderValue headerValue);
+
+            string token = headerValue.Parameter;
+            command.Token = token;
+
+            var response = await _mediator.Send(command);
+            
+            if (!response.IsSuccess)
+            {
+                var badResponse = response.TipoDeFalha.ToString() + response.Message;
+                return BadRequest(badResponse);
+            }
+
+            return Ok(response);
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> InativarConta([FromBody]InativarContaCorrenteRequest command)
